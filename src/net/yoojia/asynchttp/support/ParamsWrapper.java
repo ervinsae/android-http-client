@@ -1,4 +1,4 @@
-package com.lurencun.http;
+package net.yoojia.asynchttp.support;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

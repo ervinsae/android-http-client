@@ -1,7 +1,11 @@
-package com.lurencun.http;
+package net.yoojia.asynchttp;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import net.yoojia.asynchttp.support.RequestInvokerFactory;
+import net.yoojia.asynchttp.support.ParamsWrapper;
+import net.yoojia.asynchttp.support.RequestInvoker;
 
 /**
  * @author : 桥下一粒砂
@@ -12,6 +16,7 @@ import java.util.concurrent.Executors;
 public class AsyncHttpConnection {
 
 	public final static String VERSION = "1.0.4";
+	
 	final static int THREAD_POOL_SIZE = 5;
 	final ExecutorService threadPoolMng = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 	
@@ -86,7 +91,7 @@ public class AsyncHttpConnection {
 	
 	private void sendRequest(String method,String url,ParamsWrapper params,Object token,ResponseCallback handler){
 		if(url == null) return;
-		threadPoolMng.submit(InvokerFactory.obtain(method, url, params, token, handler));
+		threadPoolMng.submit(RequestInvokerFactory.obtain(method, url, params, token, handler));
 	}
 	
 }

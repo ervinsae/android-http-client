@@ -1,11 +1,12 @@
-package com.lurencun.http;
+package net.yoojia.asynchttp;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.URL;
 
-import com.lurencun.http.assist.ResponseStreamUtil;
+import net.yoojia.asynchttp.utility.StreamUtility;
+
 
 /**
  * @author : 桥下一粒砂
@@ -23,7 +24,7 @@ public abstract class StringResponseHandler implements ResponseCallback {
 	@Override
 	final public void onResponseWithToken(InputStream response, URL url, Object token) { 
 		try {
-			String data = ResponseStreamUtil.convertToString(response);
+			String data = StreamUtility.convertToString(response);
 			if(token != null){
 				onResponseWithToken(data,url,token);
 			}else{

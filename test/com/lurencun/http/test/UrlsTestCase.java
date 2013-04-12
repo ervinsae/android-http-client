@@ -3,10 +3,11 @@ package com.lurencun.http.test;
 import java.io.InputStream;
 import java.net.URL;
 
+import net.yoojia.asynchttp.ResponseCallback;
+import net.yoojia.asynchttp.support.ParamsWrapper;
+
 import junit.framework.Assert;
 
-import com.lurencun.http.ParamsWrapper;
-import com.lurencun.http.ResponseCallback;
 
 /**
  * author : 桥下一粒砂

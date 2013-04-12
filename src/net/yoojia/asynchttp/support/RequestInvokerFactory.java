@@ -1,6 +1,6 @@
-package com.lurencun.http;
+package net.yoojia.asynchttp.support;
 
-import com.lurencun.http.impl.SimpleHttpInvoker;
+import net.yoojia.asynchttp.ResponseCallback;
 
 /**
  * @author : 桥下一粒砂
@@ -8,7 +8,7 @@ import com.lurencun.http.impl.SimpleHttpInvoker;
  * @date   : 2012-10-23
  * @desc   : Invoker实现类创建工厂
  */
-public class InvokerFactory {
+public class RequestInvokerFactory {
 	
 	private static Class<? extends RequestInvoker> InvokerType = SimpleHttpInvoker.class;
 	

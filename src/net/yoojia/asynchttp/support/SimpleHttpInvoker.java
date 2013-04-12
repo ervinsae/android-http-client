@@ -1,4 +1,4 @@
-package com.lurencun.http.impl;
+package net.yoojia.asynchttp.support;
 
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
@@ -7,23 +7,22 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import com.lurencun.http.AsyncHttpConnection;
-import com.lurencun.http.ParamsWrapper;
-import com.lurencun.http.ParamsWrapper.NameValue;
-import com.lurencun.http.ParamsWrapper.PathParam;
-import com.lurencun.http.RequestInvoker;
-import com.lurencun.http.assist.MIMEContentType;
+import net.yoojia.asynchttp.AsyncHttpConnection;
+import net.yoojia.asynchttp.support.ParamsWrapper.NameValue;
+import net.yoojia.asynchttp.support.ParamsWrapper.PathParam;
+import net.yoojia.asynchttp.utility.MIMEType;
+
 
 /**
  * @author : 桥下一粒砂
  * @email  : chenyoca@gmail.com
  * @date   : 2012-10-23
- * @desc   : TODO
+ * @desc   : 简单的HTTP实现
  */
 public class SimpleHttpInvoker extends RequestInvoker {
 	
-	public final static String DEFAULT_USER_AGENT = String.format("AsyncHttpConnection (http://www.lurencun.com) version %s",
-			AsyncHttpConnection.VERSION);
+	public final static String DEFAULT_USER_AGENT = String.format("AsyncHttpConnection (chenyoca@gmail) version %s", AsyncHttpConnection.VERSION);
+	
 	private final static int CONNECT_TIMEOUT = 15 * 1000;
 	
 	private static final String BOUNDARY = randomBoundry();
@@ -106,7 +105,7 @@ public class SimpleHttpInvoker extends RequestInvoker {
 		buffer.append(MP_BOUNDARY).append("\r\n");
 		buffer.append("Content-Disposition: form-data; name=\"").append(paramName).append("\"; ")
 			.append("filename=\"").append(fileName).append("\"\r\n");
-		final String contentType = MIMEContentType.getContentType(exportSuffix(filePath));
+		final String contentType = MIMEType.getContentType(exportSuffix(filePath));
 		buffer.append("Content-Type: ").append(contentType).append(END_MP_BLOCK);
 		byte[] resourceSplitLine = buffer.toString().getBytes();
 		FileInputStream input = null;

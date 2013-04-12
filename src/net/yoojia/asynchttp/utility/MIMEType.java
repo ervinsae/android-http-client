@@ -1,4 +1,4 @@
-package com.lurencun.http.assist;
+package net.yoojia.asynchttp.utility;
 
 import java.util.HashMap;
 
@@ -8,7 +8,7 @@ import java.util.HashMap;
  * @date   : 2012-11-7
  * @desc   : 最全的IMEI类型
  */
-public class MIMEContentType {
+public class MIMEType {
 
 	private final static HashMap<String, String> types = new HashMap<String, String>();
 

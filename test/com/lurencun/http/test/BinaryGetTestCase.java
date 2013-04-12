@@ -2,10 +2,11 @@ package com.lurencun.http.test;
 
 import java.net.URL;
 
+import net.yoojia.asynchttp.BinaryResponseHandler;
+import net.yoojia.asynchttp.support.ParamsWrapper;
+
 import org.junit.Assert;
 
-import com.lurencun.http.BinaryResponseHandler;
-import com.lurencun.http.ParamsWrapper;
 
 /**
  * @author : 桥下一粒砂

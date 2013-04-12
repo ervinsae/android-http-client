@@ -5,8 +5,9 @@ import static org.junit.Assert.fail;
 import java.io.InputStream;
 import java.net.URL;
 
-import com.lurencun.http.ParamsWrapper;
-import com.lurencun.http.ResponseCallback;
+import net.yoojia.asynchttp.ResponseCallback;
+import net.yoojia.asynchttp.support.ParamsWrapper;
+
 
 /**
  * author : 桥下一粒砂

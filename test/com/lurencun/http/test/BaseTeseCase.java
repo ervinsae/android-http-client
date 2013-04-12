@@ -2,10 +2,11 @@ package com.lurencun.http.test;
 
 import java.util.concurrent.CountDownLatch;
 
+import net.yoojia.asynchttp.AsyncHttpConnection;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import com.lurencun.http.AsyncHttpConnection;
 
 public abstract class BaseTeseCase {
 	

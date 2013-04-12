@@ -2,10 +2,11 @@ package com.lurencun.http.test;
 
 import java.net.URL;
 
+import net.yoojia.asynchttp.StringResponseHandler;
+import net.yoojia.asynchttp.support.ParamsWrapper;
+
 import junit.framework.Assert;
 
-import com.lurencun.http.ParamsWrapper;
-import com.lurencun.http.StringResponseHandler;
 
 /**
  * @author : 桥下一粒砂
@@ -45,7 +46,7 @@ public class SimplePostTestCase extends BaseTeseCase {
 			@Override
 			public void onResponse(String content, URL url) {
 				Assert.assertNotNull(content);
-				System.out.println("Return -> "+content);
+				System.out.println("Return -> \n"+content);
 				boolean containsKey = content.contains(String.valueOf(KEY_VAL));
 				Assert.assertEquals(true, containsKey);
 				requestBack();

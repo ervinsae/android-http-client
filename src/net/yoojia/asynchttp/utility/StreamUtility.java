@@ -1,4 +1,4 @@
-package com.lurencun.http.assist;
+package net.yoojia.asynchttp.utility;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * @date   : 2012-10-23
  * @desc   : 服务端响应流处理工具类
  */
-public class ResponseStreamUtil {
+public class StreamUtility {
 
 	private final static int STREAM_EOF = -1;
 	private final static int BYTE_CACHE_SIZE = 1 * 1024;
@@ -64,5 +64,13 @@ public class ResponseStreamUtil {
         }
 		is.close();
 		return buffer.toByteArray();
+	}
+	
+	public static void closeSilently(InputStream is){
+		try {
+			is.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

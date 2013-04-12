@@ -1,4 +1,6 @@
-package com.lurencun.http;
+package net.yoojia.asynchttp.support;
+
+import net.yoojia.asynchttp.ResponseCallback;
 
 
 /**

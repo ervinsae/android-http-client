@@ -1,7 +1,9 @@
-package com.lurencun.http;
+package net.yoojia.asynchttp;
 
 import java.io.InputStream;
 import java.net.URL;
+
+import net.yoojia.asynchttp.support.ParamsWrapper;
 
 /**
  * @author : 桥下一粒砂
