@@ -2,7 +2,6 @@ package net.yoojia.asynchttp;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ConnectException;
 import java.net.URL;
 
 import net.yoojia.asynchttp.utility.StreamUtility;
@@ -22,17 +21,20 @@ public abstract class StringResponseHandler implements ResponseCallback {
 	}
 
 	@Override
-	final public void onResponseWithToken(InputStream response, URL url, Object token) { 
+	final public void onResponseWithToken(InputStream response, URL url, Object token) {
+		String data = null;
 		try {
-			String data = StreamUtility.convertToString(response);
-			if(token != null){
-				onResponseWithToken(data,url,token);
-			}else{
-				onResponse(data,url);
-			}
+			data = StreamUtility.convertToString(response);
 		} catch (IOException exp) {
-			onError(new ConnectException(exp.getMessage()));
+			onError(exp);
 			exp.printStackTrace();
+		} finally{
+			StreamUtility.closeSilently(response);
+		}
+		if(token != null){
+			onResponseWithToken(data,url,token);
+		}else{
+			onResponse(data,url);
 		}
 	}
 

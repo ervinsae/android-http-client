@@ -51,7 +51,6 @@ public class StreamUtility {
 			String data = new String(cache, 0, cacheSize);
 			sb.append(data);
 		}
-		is.close();
 		return sb.toString();
 	}
 	
@@ -62,7 +61,6 @@ public class StreamUtility {
 		for (int length = 0; (length = is.read(cache)) != STREAM_EOF;) {
 		    buffer.write(cache, 0, length);
         }
-		is.close();
 		return buffer.toByteArray();
 	}
 	

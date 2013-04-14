@@ -3,6 +3,7 @@ package net.yoojia.asynchttp.support;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -35,31 +36,36 @@ public class SimpleHttpInvoker extends RequestInvoker {
 	public void run() {
 		HttpURLConnection httpConnection = null;
 		try{
+			URL targetURL = null;
 			String urlPath = url;
-			if(METHOD_GET.equals(method) && params != null){
-				String strParam = params.getStringParams();
-				if(strParam != null) urlPath = url + "?" + strParam;
-			}
-			URL targetURL = new URL(urlPath);
-			httpConnection  = (HttpURLConnection) targetURL.openConnection();
-			httpConnection.setConnectTimeout(CONNECT_TIMEOUT);
-			httpConnection.setDoInput(true);
-			httpConnection.setUseCaches( METHOD_GET.equals(method) );
-			httpConnection.setRequestMethod(method);
-			httpConnection.setRequestProperty("User-agent",DEFAULT_USER_AGENT);
-			if(METHOD_POST.equals(method)){
-				setParams(httpConnection, method, params);
-			}
-			callback.onSubmit(targetURL, params);
-			httpConnection.connect();
+			InputStream stream = null;
+			try{
+				if(METHOD_GET.equals(method) && params != null){
+					String strParam = params.getStringParams();
+					if(strParam != null) urlPath = url + "?" + strParam;
+				}
+				targetURL = new URL(urlPath);
+				httpConnection  = (HttpURLConnection) targetURL.openConnection();
+				httpConnection.setConnectTimeout(CONNECT_TIMEOUT);
+				httpConnection.setDoInput(true);
+				httpConnection.setUseCaches( METHOD_GET.equals(method) );
+				httpConnection.setRequestMethod(method);
+				httpConnection.setRequestProperty("User-agent",DEFAULT_USER_AGENT);
+				if(METHOD_POST.equals(method)){
+					setParams(httpConnection, method, params);
+				}
+				callback.onSubmit(targetURL, params);
+				httpConnection.connect();
+				stream = httpConnection.getInputStream();
+			}catch(IOException exp){
+				callback.onError(exp);
+			}	
 			if(token != null){
-				callback.onResponseWithToken(httpConnection.getInputStream(),targetURL,token);
+				callback.onResponseWithToken(stream,targetURL,token);
 			}else{
-				callback.onResponse(httpConnection.getInputStream(),targetURL);
+				callback.onResponse(stream,targetURL);
 			}
-		}catch(Exception exp){
-			this.callback.onError(new Throwable(exp));
-		}finally {
+		}finally{
 			if(httpConnection != null) httpConnection.disconnect();
 		}
 	}

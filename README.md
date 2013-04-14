@@ -1,8 +1,8 @@
 # Async Http Connection
 =====================
 
- * a multithread callback-based async http connection framework. it can be use on android project or common java project.
- * 一个基于回调机制的多线程异步Http连接框架。它可用于Android项目或者一般Java项目。
+ * a multithread callback-based async http connection library. it can be use on android project or general java project.
+ * 一个基于回调机制的多线程异步Http连接库。它可用于Android项目或者一般Java项目。
 
 ## 适用
 	
@@ -10,12 +10,16 @@
 	当前项目属性为Java项目，并使用JUnit4作为测试环境，主要是Android项目调试不方便。
 	如果需要完善的功能，推荐一位国外大神的项目：[android-async-http](https://github.com/loopj/android-async-http)
 	
+---
+
 ## 特点
 
  * **简单** 提供POST和GET两个接口。通过参数和回调接口完成整个Http连接的交互。
  * **轻量** 纯JDK实现，不依赖第三方Jar包。
  * **快速** 采用Executor多线程并发框架，秉承它的并发处理优势。
  * **可扩展** 框架提供Invoker扩展，通过实现RequestInvoker可方便的把HttpClient等优秀框架整合到项目中。
+
+---
 
 ## 使用
 
@@ -31,25 +35,70 @@
 AsyncHttpConnection http = AsyncHttpConnection.getInstance();
 ParamsWrapper params = ...;
 String url = ...
-int requestId = http.get(url, params, new ResponseCallback() {
-	
-	@Override
-	public void onResponse(InputStream response,URL url) {
-		System.out.println("[test GET] --> response back, url = "+url);
-		Assert.assertNotNull(response);
-		requestBack();
-	}
-	
-	@Override
-	public void onError(Throwable exp) {
-		System.err.println("[test GET] --> response error, url = "+url);
-		requestBack();
-	}
 
-	@Override
-	public void onSubmit(URL url) {
-	}
-});
+// callback with InputStream
+
+	int requestId = http.get(url, params, new ResponseCallback() {
+		
+		@Override
+		public void onResponse(InputStream response,URL url) {
+			System.out.println("[test GET] --> response back, url = "+url);
+			Assert.assertNotNull(response);
+		}
+		
+		@Override
+		public void onError(Throwable exp) {
+			System.err.println("[test GET] --> response error, url = "+url);
+		}
+
+		@Override
+		public void onSubmit(URL url,ParamsWrapper params) {
+		}
+	});
+
+// callback with String 
+
+	int requestId2 = http.get(url, null, new StringResponseHandler() {
+		
+		@Override
+		public void onSubmit(URL url,ParamsWrapper params) {
+		}
+		
+		@Override
+		public void onError(Throwable exp) {
+			exp.printStackTrace();
+			requestBack();
+		}
+		
+		@Override
+		public void onResponse(String content, URL url) {
+			System.out.println("content->"+content);
+			requestBack();
+		}
+	});
+
+// callback with Binary 
+
+	http.get(url, null, new BinaryResponseHandler() {
+		
+		@Override
+		public void onSubmit(URL url, ParamsWrapper params) {
+		}
+		
+		@Override
+		public void onError(Throwable exp) {
+			exp.printStackTrace();
+			requestBack();
+		}
+		
+		@Override
+		public void onResponse(byte[] data, URL url) {
+			final int size = 4465;
+			Assert.assertEquals(size, data.length);
+			System.out.println("Data size -> "+String.valueOf(data.length));
+			requestBack();
+		}
+	});
 
 ```
 
@@ -58,25 +107,46 @@ int requestId = http.get(url, params, new ResponseCallback() {
 AsyncHttpConnection http = AsyncHttpConnection.getInstance();
 ParamsWrapper params = ...;
 String url = ...
-int requestId = http.post(url, params, new ResponseCallback() {
-	
-	@Override
-	public void onResponse(InputStream response,URL url) {
-		System.out.println("[test POST] --> response back, url = "+url);
-		Assert.assertNotNull(response);
-		requestBack();
-	}
-	
-	@Override
-	public void onError(Throwable exp) {
-		System.err.println("[test POST] --> response error, url = "+url);
-		requestBack();
-	}
 
-	@Override
-	public void onSubmit(URL url) {
-	}
-});
+// callback with Stream
+
+	int requestId = http.post(url, params, new ResponseCallback() {
+		
+		@Override
+		public void onResponse(InputStream response,URL url) {
+			System.out.println("[test POST] --> response back, url = "+url);
+			Assert.assertNotNull(response);
+			requestBack();
+		}
+		
+		@Override
+		public void onError(Throwable exp) {
+			System.err.println("[test POST] --> response error, url = "+url);
+			requestBack();
+		}
+
+		@Override
+		public void onSubmit(URL url) {
+		}
+	});
+
+// callback with String
+
+	http.post(url, params, new StringResponseHandler() {
+		@Override
+		public void onSubmit(URL url,ParamsWrapper params) { 
+			System.out.println(">> target: "+url.getHost()+" --> "+url.getPath());
+		}
+		@Override
+		public void onError(Throwable exp) {
+			exp.printStackTrace();
+		}
+		@Override
+		public void onResponse(String content, URL url) {
+			System.out.println("Return -> \n"+content);
+		}
+
+	});
 ```
 
 ### 更详细的例子 
@@ -116,8 +186,8 @@ int requestId = http.post(url, params, new StringResponseHandler() {
 ```
 
 ``` java
-//在大量并发的异步请求情况下，每个请求的回调可能需要一个标识码来标记这个回调结果。
-//有两种方式来解决这个问题：
+// 在大量并发的异步请求情况下，每个请求的回调可能需要一个标识码来标记这个回调结果。
+// 有两种方式来解决这个问题：
 // 1、使用get和post返回的RequestID来标识，但这需要对RequestID进行管理
 // 2、使用get和post的token参数
 
@@ -159,7 +229,9 @@ int requestId = http.post(url, params, token, new StringResponseHandler() {
 
 ```
 
-### 开源协议
+---
+
+## 开源协议
 
 The code of this project is released under the Apache License 2.0, see [LICENSE](https://github.com/chenyoca/async-http-connection-core/blob/master/LICENSE)
 
