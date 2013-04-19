@@ -15,10 +15,9 @@ import net.yoojia.asynchttp.support.RequestInvoker;
  */
 public class AsyncHttpConnection {
 
-	public final static String VERSION = "1.0.4";
-	
-	final static int THREAD_POOL_SIZE = 5;
-	final ExecutorService threadPoolMng = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+	public static final String VERSION = "1.1.0";
+	static final int THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors()*2;
+	static final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 	
 	private AsyncHttpConnection(){}
 	private static class SingletonProvider {
@@ -52,7 +51,7 @@ public class AsyncHttpConnection {
 	 *
 	 */
 	public void get(String url,ParamsWrapper params,Object token,ResponseCallback callback){
-		verifyParams(url,callback);
+		verifyUrl(url);
 		sendRequest(RequestInvoker.METHOD_GET,url,params,token,callback);
 	}
 	
@@ -80,18 +79,17 @@ public class AsyncHttpConnection {
 	 *
 	 */
 	public void post(String url,ParamsWrapper params,Object token,ResponseCallback callback){
-		verifyParams(url,callback);
+		verifyUrl(url);
 		sendRequest(RequestInvoker.METHOD_POST,url,params,token,callback);
 	}
 	
-	private void verifyParams(String url,ResponseCallback callback){
-		if(callback == null) throw new IllegalArgumentException("ResponseCallback cannot be null");
+	private void verifyUrl(String url){
 		if(url == null) throw new IllegalArgumentException("Connection url cannot be null");
 	}
 	
 	private void sendRequest(String method,String url,ParamsWrapper params,Object token,ResponseCallback handler){
 		if(url == null) return;
-		threadPoolMng.submit(RequestInvokerFactory.obtain(method, url, params, token, handler));
+		THREAD_POOL.submit(RequestInvokerFactory.obtain(method, url, params, token, handler));
 	}
 	
 }

@@ -32,8 +32,9 @@ public class SimpleHttpInvoker extends RequestInvoker {
 	private static final String END_MP_BLOCK = "\r\n\r\n";
 	private static final String MULTIPART_FORM_DATA = "multipart/form-data";
 	private static final String XWWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
+	
 	@Override
-	public void run() {
+	protected void executing() {
 		HttpURLConnection httpConnection = null;
 		try{
 			URL targetURL = null;

@@ -21,6 +21,135 @@
 
 ---
 
+## 测试辅助
+
+在多线程测试中，如果并发多条线程，则测试主线程需要等待所在测试子线程全部返回后才结束。一般采用两种方式：1、Thread.sleep()方式。2、CountDown计数方式。
+
+所有问题的的解决方式都不只有一种，看谁的方式更好更——优雅而已。
+
+比如：本框架内置多线程测试辅助工具组合ResponseCallbackProxy + ThreadWaiter。可以利用简单的几个方法，就解决并发线程等待的问题。
+
+### 多线程测试辅助的使用方法
+
+使用方法很简单
+
+1. 创建回调接口动态代理
+
+```java
+
+	protected final ResponseCallbackTrace callbackTrace = new ResponseCallbackTrace();
+
+```
+
+ResponseCallbackProxy 是一个动态代理实现类，它可以监听 ResponseCallback 的调用。并将线程执行情况记录在ThreadWaiter中。
+
+1. 对回调接口添加代理
+
+```java
+
+	for(String url : urls){
+			http.get(url, null,
+					// 使用回调动态代理，可以自动处理等待其它线程返回的问题
+					callbackTrace.trace(callback));
+		}
+
+```
+
+1. 等待所有线程返回
+
+```java
+
+	//等待所有线程返回
+	ThreadWaiter.waitingThreads();
+
+```
+
+### 完整的测试代码
+
+```java
+
+	public class UrlsTestCase{
+
+	final static String[] AvailableUrls = {
+		"http://www.lurencun.com",
+		"http://www.163.com",
+		"http://www.126.com",
+		"http://www.google.com.hk",
+		"http://www.qq.com",
+		"http://www.ifeng.com",
+		"http://www.renren.com",
+		"http://www.58.com",
+		"http://www.psbc.com",
+		"http://www.suning.com",
+		"http://www.jumei.com",
+		"http://www.xiu.com",
+		"http://www.letv.com",
+		"http://www.miercn.com",
+		"http://www.jrj.com",
+		"http://www.suning.com",
+		"http://www.9ku.com",
+		"http://www.jumei.com",
+		"http://www.ctrip.com",
+		"http://www.tuniu.com",
+		"http://www.icbc.com",
+		"http://www.ccb.com",
+		"http://www.gexing.com",
+		"http://www.nipic.com",
+		"http://www.jxedt.com",
+		"http://www.iqiyi.com",
+		"http://www.skycn.com",
+		"http://www.7k7k.com",
+	};
+	
+	protected ResponseCallback callback = new ResponseCallback() {
+		
+		@Override
+		public void onResponse(InputStream response,URL url) {
+			System.out.println("[test GET] --> response back, url = "+url);
+			Assert.assertNotNull(response);
+		}
+		
+		@Override
+		public void onError(Throwable exp) {
+			Assert.fail(exp.getMessage());
+			System.err.println("[test GET] --> response error");
+		}
+
+		@Override
+		public void onSubmit(URL url,ParamsWrapper params) {}
+
+		@Override
+		public void onResponseWithToken(InputStream response, URL url, Object token) {}
+	};
+
+	final AsyncHttpConnection http = AsyncHttpConnection.getInstance();
+	
+	final ResponseCallbackTrace callbackTrace = new ResponseCallbackTrace();
+	
+	@Test
+	public final void test(){
+		
+		testAllUrls(AvailableUrls);
+		
+		//等待所有线程返回
+		ThreadWaiter.waitingThreads();
+	}
+	
+	protected void testAllUrls(String[] urls){
+		
+		for(String url : urls){
+			http.get(url, null,
+					// 使用回调动态代理，可以自动处理等待其它线程返回的问题
+					callbackTrace.trace(callback));
+		}
+	}
+
+}
+
+```
+
+----
+
 ## 使用
 
 默认使用SimpleHttpInvoker类执行Http连接，基于HttpUrlConnection实现。
@@ -228,6 +357,8 @@ int requestId = http.post(url, params, token, new StringResponseHandler() {
 });
 
 ```
+
+
 
 ---
 

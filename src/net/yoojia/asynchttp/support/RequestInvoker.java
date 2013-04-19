@@ -31,5 +31,12 @@ public abstract class RequestInvoker implements Runnable{
 		this.callback = callback;
 		this.token = token;
 	}
+
+	@Override
+	public final void run() {
+		executing();
+	}
+	
+	protected abstract void executing();
 	
 }
