@@ -19,6 +19,7 @@ public class ResponseCallbackTrace implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
 		String methodName = method.getName();
+		Object result = method.invoke(object, args);
 		if(methodName.equalsIgnoreCase("onsubmit")){
 			ThreadWaiter.threadStarted();
 		}else if(methodName.equalsIgnoreCase("onerror")){
@@ -28,7 +29,7 @@ public class ResponseCallbackTrace implements InvocationHandler {
 		}else if(methodName.equalsIgnoreCase("onresponsewithtoken")){
 			ThreadWaiter.threadFinished();
 		}
-		return method.invoke(object, args);
+		return result;
 	}
 
 }
