@@ -1,6 +1,7 @@
 package net.yoojia.asynchttp.support;
 
 import net.yoojia.asynchttp.ResponseCallback;
+import net.yoojia.asynchttp.support.RequestInvoker.HttpMethod;
 
 /**
  * @author : 桥下一粒砂
@@ -12,11 +13,11 @@ public class RequestInvokerFactory {
 	
 	private static Class<? extends RequestInvoker> InvokerType = SimpleHttpInvoker.class;
 	
-	public static RequestInvoker obtain(String method,String url,ParamsWrapper params,ResponseCallback callback){
+	public static RequestInvoker obtain(HttpMethod method,String url,ParamsWrapper params,ResponseCallback callback){
 		return obtain(method, url, params, null, callback);
 	}
 	
-	public static RequestInvoker obtain(String method,String url,ParamsWrapper params,Object token,ResponseCallback callback){
+	public static RequestInvoker obtain(HttpMethod method,String url,ParamsWrapper params,Object token,ResponseCallback callback){
 		RequestInvoker invoker = null;
 		if(!InvokerType.equals(SimpleHttpInvoker.class)){
 			try {

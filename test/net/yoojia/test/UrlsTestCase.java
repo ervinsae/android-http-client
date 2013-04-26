@@ -109,6 +109,7 @@ public class UrlsTestCase{
 			Assert.assertNotNull(content);
 			System.out.println("返回String数据长度："+content.length());
 		}
+		
 	};
 
 	protected final AsyncHttpConnection http = AsyncHttpConnection.getInstance();

@@ -3,9 +3,9 @@ package net.yoojia.asynchttp;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import net.yoojia.asynchttp.support.RequestInvokerFactory;
 import net.yoojia.asynchttp.support.ParamsWrapper;
-import net.yoojia.asynchttp.support.RequestInvoker;
+import net.yoojia.asynchttp.support.RequestInvoker.HttpMethod;
+import net.yoojia.asynchttp.support.RequestInvokerFactory;
 
 /**
  * @author : 桥下一粒砂
@@ -28,7 +28,16 @@ public class AsyncHttpConnection {
 	}
 	
 	/**
-	 * Send a 'get' request to url with params, response on callback
+	 * Send a 'get' request to url without params.
+	 * @param url
+	 * @param callback
+	 */
+	public void get(String url,ResponseCallback callback){
+		get(url, null, callback);
+	}
+	
+	/**
+	 * Send a 'get' request to url with params, response on callback.
 	 * @param url
 	 * @param params
 	 * @param callback
@@ -52,11 +61,20 @@ public class AsyncHttpConnection {
 	 */
 	public void get(String url,ParamsWrapper params,Object token,ResponseCallback callback){
 		verifyUrl(url);
-		sendRequest(RequestInvoker.METHOD_GET,url,params,token,callback);
+		sendRequest(url,params,HttpMethod.GET,token,callback);
 	}
 	
 	/**
-	 * Send a 'post' request to url with params, response on callback
+	 * Send a 'post' request to url without params.
+	 * @param url
+	 * @param callback
+	 */
+	public void post(String url,ResponseCallback callback){
+		post(url, null, callback);
+	}
+	
+	/**
+	 * Send a 'post' request to url with params, response on callback.
 	 * @param url
 	 * @param params
 	 * @param callback
@@ -80,16 +98,35 @@ public class AsyncHttpConnection {
 	 */
 	public void post(String url,ParamsWrapper params,Object token,ResponseCallback callback){
 		verifyUrl(url);
-		sendRequest(RequestInvoker.METHOD_POST,url,params,token,callback);
+		sendRequest(url,params,HttpMethod.POST,token,callback);
 	}
 	
 	private void verifyUrl(String url){
 		if(url == null) throw new IllegalArgumentException("Connection url cannot be null");
 	}
 	
-	private void sendRequest(String method,String url,ParamsWrapper params,Object token,ResponseCallback handler){
+	/**
+	 * send request to url with params,method and callback, without token.
+	 * @param url
+	 * @param params
+	 * @param method
+	 * @param callback
+	 */
+	public void sendRequest(String url,ParamsWrapper params,HttpMethod method, ResponseCallback callback){
+		sendRequest(url, params, method, null, callback);
+	}
+	
+	/**
+	 * Send request o url with params,method,token and callback.
+	 * @param method
+	 * @param url
+	 * @param params
+	 * @param token
+	 * @param callback
+	 */
+	public void sendRequest(String url,ParamsWrapper params,HttpMethod method,Object token,ResponseCallback callback){
 		if(url == null) return;
-		THREAD_POOL.submit(RequestInvokerFactory.obtain(method, url, params, token, handler));
+		THREAD_POOL.submit(RequestInvokerFactory.obtain(method, url, params, token, callback));
 	}
 	
 }

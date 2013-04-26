@@ -14,7 +14,7 @@
 
 ## 特点
 
- * **简单** 提供POST和GET两个接口。通过参数和回调接口完成整个Http连接的交互。
+ * **简单** 提供POST和GET两个接口，通过扩展接口可设置PUT、DELETE方法。通过参数和回调接口完成整个Http连接的交互。
  * **轻量** 纯JDK实现，不依赖第三方Jar包。
  * **快速** 采用Executor多线程并发框架，秉承它的并发处理优势。
  * **可扩展** 框架提供Invoker扩展，通过实现RequestInvoker可方便的把HttpClient等优秀框架整合到项目中。
@@ -27,7 +27,7 @@
 
 所有问题的的解决方式都不只有一种，看谁的方式更好更——优雅而已。
 
-比如：本框架内置多线程测试辅助工具组合ResponseCallbackProxy + ThreadWaiter。可以利用简单的几个方法，就解决并发线程等待的问题。
+比如：本框架内置多线程测试辅助工具组合 ResponseCallbackTrace + ThreadWaiter。可以利用简单的几个方法，就解决并发线程等待的问题。
 
 ### 多线程测试辅助的使用方法
 
@@ -41,7 +41,7 @@
 
 ```
 
-ResponseCallbackProxy 是一个动态代理实现类，它可以监听 ResponseCallback 的调用。并将线程执行情况记录在ThreadWaiter中。
+ResponseCallbackTrace 是一个动态代理实现类，它可以监听 ResponseCallback 的调用。并将线程执行情况记录在ThreadWaiter中。
 
 1. 对回调接口添加代理
 
@@ -358,6 +358,14 @@ int requestId = http.post(url, params, token, new StringResponseHandler() {
 
 ```
 
+### HTTP Method
+
+需要使用其它Http Mehtod，可以通过
+
+	* sendRequest(String url,ParamsWrapper params,HttpMethod method,Object token,ResponseCallback callback)
+	* sendRequest(String url,ParamsWrapper params,HttpMethod method, ResponseCallback callback)
+
+接口调用。
 
 
 ---

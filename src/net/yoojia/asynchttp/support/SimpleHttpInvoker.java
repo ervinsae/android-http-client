@@ -22,7 +22,7 @@ import net.yoojia.asynchttp.utility.MIMEType;
  */
 public class SimpleHttpInvoker extends RequestInvoker {
 	
-	public final static String DEFAULT_USER_AGENT = String.format("AsyncHttpConnection (chenyoca@gmail) version %s", AsyncHttpConnection.VERSION);
+	public final static String DEFAULT_USER_AGENT = String.format("AsyncHttpConnection (chenyoca@gmail.com) version %s", AsyncHttpConnection.VERSION);
 	
 	private final static int CONNECT_TIMEOUT = 15 * 1000;
 	
@@ -41,7 +41,8 @@ public class SimpleHttpInvoker extends RequestInvoker {
 			String urlPath = url;
 			InputStream stream = null;
 			try{
-				if(METHOD_GET.equals(method) && params != null){
+				final boolean isGetMethod = HttpMethod.GET.equals(method) && params != null;
+				if(isGetMethod){
 					String strParam = params.getStringParams();
 					if(strParam != null) urlPath = url + "?" + strParam;
 				}
@@ -49,11 +50,11 @@ public class SimpleHttpInvoker extends RequestInvoker {
 				httpConnection  = (HttpURLConnection) targetURL.openConnection();
 				httpConnection.setConnectTimeout(CONNECT_TIMEOUT);
 				httpConnection.setDoInput(true);
-				httpConnection.setUseCaches( METHOD_GET.equals(method) );
-				httpConnection.setRequestMethod(method);
+				httpConnection.setUseCaches( HttpMethod.GET.equals(method) );
+				httpConnection.setRequestMethod(method.name());
 				httpConnection.setRequestProperty("User-agent",DEFAULT_USER_AGENT);
-				if(METHOD_POST.equals(method)){
-					setParams(httpConnection, method, params);
+				if( !isGetMethod ){
+					setParams(httpConnection, params);
 				}
 				callback.onSubmit(targetURL, params);
 				httpConnection.connect();
@@ -71,7 +72,7 @@ public class SimpleHttpInvoker extends RequestInvoker {
 		}
 	}
 	
-	public static void setParams(final HttpURLConnection conn, String method, ParamsWrapper params) throws IOException {
+	public static void setParams(final HttpURLConnection conn, ParamsWrapper params) throws IOException {
 		if(params == null) return;
 		conn.setDoOutput(true);
 		if(params.pathParamArray.isEmpty()){
