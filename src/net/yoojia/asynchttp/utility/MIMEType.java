@@ -3,10 +3,9 @@ package net.yoojia.asynchttp.utility;
 import java.util.HashMap;
 
 /**
- * @author : 桥下一粒砂
- * @email  : chenyoca@gmail.com
- * @date   : 2012-11-7
- * @desc   : 最全的IMEI类型
+ * @author : 桥下一粒砂 chenyoca@gmail.com
+ * date   : 2012-11-7
+ * 最全的IMEI类型
  */
 public class MIMEType {
 

@@ -8,10 +8,9 @@ import java.net.URL;
 
 
 /**
- * @author : 桥下一粒砂
- * @email  : chenyoca@gmail.com
- * @date   : 2012-10-23
- * @desc   : 字符型响应处理类
+ * @author : 桥下一粒砂 chenyoca@gmail.com
+ * date   : 2012-10-23
+ * 字符型响应处理类
  */
 public abstract class StringResponseHandler implements ResponseCallback {
 

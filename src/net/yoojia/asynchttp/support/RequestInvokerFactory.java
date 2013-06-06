@@ -30,7 +30,7 @@ public class RequestInvokerFactory {
 	
 	/**
 	 * 向工厂注册一个Invoker实现类
-	 * @param clazz
+	 * @param clazz 实现类的类对象
 	 */
 	public static void register(Class<? extends RequestInvoker> clazz){
 		InvokerType = clazz;

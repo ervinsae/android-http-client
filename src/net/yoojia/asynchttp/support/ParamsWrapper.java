@@ -5,10 +5,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
- * @author : 桥下一粒砂
- * @email  : chenyoca@gmail.com
- * @date   : 2012-10-23
- * @desc   : A http connection parameters wrapper
+ * @author : 桥下一粒砂 chenyoca@gmail.com
+ * date   : 2012-10-23
+ * A http connection parameters wrapper
  */
 public class ParamsWrapper {
 

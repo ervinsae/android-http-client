@@ -19,7 +19,7 @@ public class SimpleHttpInvoker extends RequestInvoker {
 	
 	public final static String DEFAULT_USER_AGENT = String.format("AsyncHttpConnection (chenyoca@gmail.com) version %s", AsyncHttpConnection.VERSION);
 	
-	private static final String BOUNDARY = randomBoundry();
+	private static final String BOUNDARY = randomBoundary();
 	private static final String MP_BOUNDARY = "--" + BOUNDARY;
 	private static final String END_MP_BOUNDARY = "--" + BOUNDARY + "--";
 	private static final String END_MP_BLOCK = "\r\n\r\n";
@@ -163,7 +163,7 @@ public class SimpleHttpInvoker extends RequestInvoker {
 		return path.substring(path.lastIndexOf(".") + 1);
 	}
 	
-	static String randomBoundry() {
+	static String randomBoundary () {
         StringBuilder buffer = new StringBuilder("----BoundaryGenByInvoker");
         for (int t = 1; t < 12; t++) {
             long time = System.currentTimeMillis() + t;

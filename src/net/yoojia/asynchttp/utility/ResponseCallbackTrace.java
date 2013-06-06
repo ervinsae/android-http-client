@@ -1,10 +1,10 @@
 package net.yoojia.asynchttp.utility;
 
+import net.yoojia.asynchttp.ResponseCallback;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-
-import net.yoojia.asynchttp.ResponseCallback;
 
 public class ResponseCallbackTrace implements InvocationHandler {
 	
@@ -20,13 +20,13 @@ public class ResponseCallbackTrace implements InvocationHandler {
 	public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
 		String methodName = method.getName();
 		Object result = method.invoke(object, args);
-		if(methodName.equalsIgnoreCase("onsubmit")){
+		if(methodName.equalsIgnoreCase("onSubmit")){
 			ThreadWaiter.threadStarted();
-		}else if(methodName.equalsIgnoreCase("onerror")){
+		}else if(methodName.equalsIgnoreCase("onResponse")){
 			ThreadWaiter.threadFinished();
-		}else if(methodName.equalsIgnoreCase("onresponse")){
+		}else if(methodName.equalsIgnoreCase("onConnectError")){
 			ThreadWaiter.threadFinished();
-		}else if(methodName.equalsIgnoreCase("onresponsewithtoken")){
+		}else if(methodName.equalsIgnoreCase("onStreamError")){
 			ThreadWaiter.threadFinished();
 		}
 		return result;
