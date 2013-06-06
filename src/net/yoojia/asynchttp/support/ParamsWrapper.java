@@ -67,6 +67,18 @@ public class ParamsWrapper {
 		pathParamArray.add(new PathParam(name, fileName, path));
 		return this;
 	}
+
+	public boolean containsValue(String name){
+		boolean contains = false;
+		if( name == null ) return contains;
+		for(NameValue item : nameValueArray){
+			if( name.equalsIgnoreCase( item.name )){
+				contains = true;
+				break;
+			}
+		}
+		return contains;
+	}
 	
 	private ParamsWrapper appendToParamsArray(String name,Object value){
 		if(name != null && value != null 
@@ -102,10 +114,8 @@ public class ParamsWrapper {
 	 * @throws UnsupportedEncodingException
 	 */
 	public String getStringParams(String urlEncoding) throws UnsupportedEncodingException{
-		StringBuffer buffer = new StringBuffer();
-		final int size = nameValueArray.size();
-		for(int i=0;i<size;i++){
-			NameValue param = nameValueArray.get(i);
+		StringBuilder buffer = new StringBuilder();
+		for(NameValue param : nameValueArray){
 			buffer.append(param.name).append("=")
 				.append(URLEncoder.encode(param.value,urlEncoding))
 				.append("&");
