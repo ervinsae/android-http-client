@@ -4,21 +4,16 @@ import net.yoojia.asynchttp.ResponseCallback;
 import net.yoojia.asynchttp.support.RequestInvoker.HttpMethod;
 
 /**
- * @author : 桥下一粒砂
- * @email  : chenyoca@gmail.com
- * @date   : 2012-10-23
- * @desc   : Invoker实现类创建工厂
+ * @author : 桥下一粒砂 chenyoca@gmail.com
+ * date   : 2012-10-23
+ * Invoker实现类创建工厂
  */
 public class RequestInvokerFactory {
 	
 	private static Class<? extends RequestInvoker> InvokerType = SimpleHttpInvoker.class;
 	
 	public static RequestInvoker obtain(HttpMethod method,String url,ParamsWrapper params,ResponseCallback callback){
-		return obtain(method, url, params, null, callback);
-	}
-	
-	public static RequestInvoker obtain(HttpMethod method,String url,ParamsWrapper params,Object token,ResponseCallback callback){
-		RequestInvoker invoker = null;
+		RequestInvoker invoker;
 		if(!InvokerType.equals(SimpleHttpInvoker.class)){
 			try {
 				invoker = InvokerType.newInstance();
@@ -29,7 +24,7 @@ public class RequestInvokerFactory {
 		}else{
 			invoker = new SimpleHttpInvoker();
 		}
-		invoker.initWithToken(method, url, params, token, callback);
+		invoker.init(method, url, params, callback);
 		return invoker;
 	}
 	

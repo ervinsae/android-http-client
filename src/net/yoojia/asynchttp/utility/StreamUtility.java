@@ -9,15 +9,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author : 桥下一粒砂
- * @email  : chenyoca@gmail.com
- * @date   : 2012-10-23
- * @desc   : 服务端响应流处理工具类
+ * @author : 桥下一粒砂 chenyoca@gmail.com
+ * date   : 2012-10-23
+ * 服务端响应流处理工具类
  */
 public class StreamUtility {
 
 	private final static int STREAM_EOF = -1;
-	private final static int BYTE_CACHE_SIZE = 1 * 1024;
+	private final static int BYTE_CACHE_SIZE = 1024;
 	private final static int FIND_CHARSET_CACHE_SIZE = 4 * 1024;
 	private final static String DEFAULT_CHARSET = "utf-8";
 	
@@ -46,7 +45,7 @@ public class StreamUtility {
 		BufferedReader reader = new BufferedReader(isr);
 		char cache[] = new char[BYTE_CACHE_SIZE];
 		int cacheSize = STREAM_EOF;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		while((cacheSize = reader.read(cache)) != STREAM_EOF){
 			String data = new String(cache, 0, cacheSize);
 			sb.append(data);

@@ -68,9 +68,9 @@ ResponseCallbackTrace 是一个动态代理实现类，它可以监听 ResponseC
 
 ```java
 
-	public class UrlsTestCase{
+public class UrlsTestCase{
 
-	final static String[] AvailableUrls = {
+	final static String[] URLs = {
 		"http://www.lurencun.com",
 		"http://www.163.com",
 		"http://www.126.com",
@@ -85,7 +85,7 @@ ResponseCallbackTrace 是一个动态代理实现类，它可以监听 ResponseC
 		"http://www.xiu.com",
 		"http://www.letv.com",
 		"http://www.miercn.com",
-		"http://www.jrj.com",
+		"http://www.jrj.com.cn",
 		"http://www.suning.com",
 		"http://www.9ku.com",
 		"http://www.jumei.com",
@@ -100,48 +100,126 @@ ResponseCallbackTrace 是一个动态代理实现类，它可以监听 ResponseC
 		"http://www.skycn.com",
 		"http://www.7k7k.com",
 	};
-	
-	protected ResponseCallback callback = new ResponseCallback() {
-		
+
+	protected final ResponseCallback callback = new ResponseCallback() {
+
 		@Override
 		public void onResponse(InputStream response,URL url) {
-			System.out.println("[test GET] --> response back, url = "+url);
+			System.out.print("请求URL："+url+"  ");
+			System.out.println("返回InputStream数据："+url);
 			Assert.assertNotNull(response);
 		}
-		
+
 		@Override
-		public void onError(Throwable exp) {
+		public void onConnectError (IOException exp) {
 			Assert.fail(exp.getMessage());
-			System.err.println("[test GET] --> response error");
 		}
 
 		@Override
-		public void onSubmit(URL url,ParamsWrapper params) {}
+		public void onSteamError (IOException exp) {
+			Assert.fail(exp.getMessage());
+		}
 
 		@Override
-		public void onResponseWithToken(InputStream response, URL url, Object token) {}
+		public void onSubmit(URL url,ParamsWrapper params) {
+		}
+
+
 	};
 
-	final AsyncHttpConnection http = AsyncHttpConnection.getInstance();
-	
-	final ResponseCallbackTrace callbackTrace = new ResponseCallbackTrace();
-	
+	protected final ResponseCallback binCallback = new BinaryResponseHandler() {
+
+		@Override
+		public void onSubmit(URL url, ParamsWrapper params) {
+		}
+
+		@Override
+		public void onConnectError (IOException exp) {
+			Assert.fail(exp.getMessage());
+		}
+
+		@Override
+		public void onSteamError (IOException exp) {
+			Assert.fail(exp.getMessage());
+		}
+
+		@Override
+		public void onResponse(byte[] data, URL url) {
+			Assert.assertNotNull(data);
+			System.out.print("请求URL："+url+"  ");
+			System.out.println("返回Binary数据长度："+data.length);
+		}
+	};
+
+	protected final ResponseCallback stringCallback = new StringResponseHandler() {
+
+		@Override
+		public void onSubmit(URL url, ParamsWrapper params) {
+		}
+
+		@Override
+		public void onConnectError (IOException exp) {
+			Assert.fail(exp.getMessage());
+		}
+
+		@Override
+		public void onSteamError (IOException exp) {
+			Assert.fail(exp.getMessage());
+		}
+
+		@Override
+		public void onResponse(String content, URL url) {
+			Assert.assertNotNull(content);
+			System.out.print("请求URL："+url+"  ");
+			System.out.println("返回String数据长度："+content.length());
+		}
+
+	};
+
+	protected final AsyncHttpConnection http = AsyncHttpConnection.getInstance();
+
+	protected final ResponseCallbackTrace callbackTrace = new ResponseCallbackTrace();
+
 	@Test
-	public final void test(){
-		
-		testAllUrls(AvailableUrls);
-		
+	public final void testCallback(){
+
+		ThreadWaiter.reset();
+
+		for(String url : URLs){
+			// 使用回调动态代理追踪回调执行情况，可以自动处理等待其它线程返回的问题
+			http.get(url, null, callbackTrace.trace(callback));
+		}
+
 		//等待所有线程返回
 		ThreadWaiter.waitingThreads();
 	}
-	
-	protected void testAllUrls(String[] urls){
-		
-		for(String url : urls){
-			http.get(url, null,
-					// 使用回调动态代理，可以自动处理等待其它线程返回的问题
-					callbackTrace.trace(callback));
+
+	@Test
+	public final void testString(){
+
+		ThreadWaiter.reset();
+
+		for(String url : URLs){
+			// 使用回调动态代理追踪回调执行情况，可以自动处理等待其它线程返回的问题
+			http.get(url, null, callbackTrace.trace(stringCallback));
 		}
+
+		//等待所有线程返回
+		ThreadWaiter.waitingThreads();
+	}
+
+	@Test
+	public final void testBin(){
+
+		ThreadWaiter.reset();
+
+		for(String url : URLs){
+			// 使用回调动态代理追踪回调执行情况，可以自动处理等待其它线程返回的问题
+			http.get(url, null, callbackTrace.trace(binCallback));
+		}
+
+		//等待所有线程返回
+		ThreadWaiter.waitingThreads();
 	}
 
 }
@@ -170,19 +248,25 @@ String url = ...
 	int requestId = http.get(url, params, new ResponseCallback() {
 		
 		@Override
-		public void onResponse(InputStream response,URL url) {
-			System.out.println("[test GET] --> response back, url = "+url);
-			Assert.assertNotNull(response);
-		}
-		
-		@Override
-		public void onError(Throwable exp) {
-			System.err.println("[test GET] --> response error, url = "+url);
-		}
+        public void onResponse(InputStream response,URL url) {
+            System.out.print("请求URL："+url+"  ");
+            System.out.println("返回InputStream数据："+url);
+            Assert.assertNotNull(response);
+        }
 
-		@Override
-		public void onSubmit(URL url,ParamsWrapper params) {
-		}
+        @Override
+        public void onConnectError (IOException exp) {
+            Assert.fail(exp.getMessage());
+        }
+
+        @Override
+        public void onSteamError (IOException exp) {
+            Assert.fail(exp.getMessage());
+        }
+
+        @Override
+        public void onSubmit(URL url,ParamsWrapper params) {
+        }
 	});
 
 // callback with String 
@@ -190,20 +274,25 @@ String url = ...
 	int requestId2 = http.get(url, null, new StringResponseHandler() {
 		
 		@Override
-		public void onSubmit(URL url,ParamsWrapper params) {
-		}
-		
-		@Override
-		public void onError(Throwable exp) {
-			exp.printStackTrace();
-			requestBack();
-		}
-		
-		@Override
-		public void onResponse(String content, URL url) {
-			System.out.println("content->"+content);
-			requestBack();
-		}
+        public void onSubmit(URL url, ParamsWrapper params) {
+        }
+
+        @Override
+        public void onConnectError (IOException exp) {
+            Assert.fail(exp.getMessage());
+        }
+
+        @Override
+        public void onSteamError (IOException exp) {
+            Assert.fail(exp.getMessage());
+        }
+
+        @Override
+        public void onResponse(String content, URL url) {
+            Assert.assertNotNull(content);
+            System.out.print("请求URL："+url+"  ");
+            System.out.println("返回String数据长度："+content.length());
+        }
 	});
 
 // callback with Binary 
@@ -211,22 +300,25 @@ String url = ...
 	http.get(url, null, new BinaryResponseHandler() {
 		
 		@Override
-		public void onSubmit(URL url, ParamsWrapper params) {
-		}
-		
-		@Override
-		public void onError(Throwable exp) {
-			exp.printStackTrace();
-			requestBack();
-		}
-		
-		@Override
-		public void onResponse(byte[] data, URL url) {
-			final int size = 4465;
-			Assert.assertEquals(size, data.length);
-			System.out.println("Data size -> "+String.valueOf(data.length));
-			requestBack();
-		}
+        public void onSubmit(URL url, ParamsWrapper params) {
+        }
+
+        @Override
+        public void onConnectError (IOException exp) {
+            Assert.fail(exp.getMessage());
+        }
+
+        @Override
+        public void onSteamError (IOException exp) {
+            Assert.fail(exp.getMessage());
+        }
+
+        @Override
+        public void onResponse(byte[] data, URL url) {
+            Assert.assertNotNull(data);
+            System.out.print("请求URL："+url+"  ");
+            System.out.println("返回Binary数据长度："+data.length);
+        }
 	});
 
 ```
@@ -242,38 +334,50 @@ String url = ...
 	int requestId = http.post(url, params, new ResponseCallback() {
 		
 		@Override
-		public void onResponse(InputStream response,URL url) {
-			System.out.println("[test POST] --> response back, url = "+url);
-			Assert.assertNotNull(response);
-			requestBack();
-		}
-		
-		@Override
-		public void onError(Throwable exp) {
-			System.err.println("[test POST] --> response error, url = "+url);
-			requestBack();
-		}
+        public void onResponse(InputStream response,URL url) {
+            System.out.print("请求URL："+url+"  ");
+            System.out.println("返回InputStream数据："+url);
+            Assert.assertNotNull(response);
+        }
 
-		@Override
-		public void onSubmit(URL url) {
-		}
+        @Override
+        public void onConnectError (IOException exp) {
+            Assert.fail(exp.getMessage());
+        }
+
+        @Override
+        public void onSteamError (IOException exp) {
+            Assert.fail(exp.getMessage());
+        }
+
+        @Override
+        public void onSubmit(URL url,ParamsWrapper params) {
+        }
 	});
 
 // callback with String
 
 	http.post(url, params, new StringResponseHandler() {
 		@Override
-		public void onSubmit(URL url,ParamsWrapper params) { 
-			System.out.println(">> target: "+url.getHost()+" --> "+url.getPath());
-		}
-		@Override
-		public void onError(Throwable exp) {
-			exp.printStackTrace();
-		}
-		@Override
-		public void onResponse(String content, URL url) {
-			System.out.println("Return -> \n"+content);
-		}
+        public void onSubmit(URL url, ParamsWrapper params) {
+        }
+
+        @Override
+        public void onConnectError (IOException exp) {
+            Assert.fail(exp.getMessage());
+        }
+
+        @Override
+        public void onSteamError (IOException exp) {
+            Assert.fail(exp.getMessage());
+        }
+
+        @Override
+        public void onResponse(String content, URL url) {
+            Assert.assertNotNull(content);
+            System.out.print("请求URL："+url+"  ");
+            System.out.println("返回String数据长度："+content.length());
+        }
 
 	});
 ```
@@ -298,10 +402,14 @@ int requestId = http.post(url, params, new StringResponseHandler() {
 	}
 
 	@Override
-	public void onError(Throwable exp) {
-		requestBack();
-		exp.printStackTrace();
-	}
+    public void onConnectError (IOException exp) {
+        Assert.fail(exp.getMessage());
+    }
+
+    @Override
+    public void onSteamError (IOException exp) {
+        Assert.fail(exp.getMessage());
+    }
 
 	@Override
 	public void onResponse(String content, URL url) {
@@ -341,10 +449,14 @@ int requestId = http.post(url, params, token, new StringResponseHandler() {
 	}
 
 	@Override
-	public void onError(Throwable exp) {
-		requestBack();
-		exp.printStackTrace();
-	}
+    public void onConnectError (IOException exp) {
+        Assert.fail(exp.getMessage());
+    }
+
+    @Override
+    public void onSteamError (IOException exp) {
+        Assert.fail(exp.getMessage());
+    }
 
 	@Override
 	public void onResponse(String content, URL url, Object token) {

@@ -5,6 +5,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ThreadWaiter {
 
 	private static final ConcurrentHashMap<Long, Object> threadIDsMapping = new ConcurrentHashMap<Long, Object>();
+
+	/**
+	 * 重置
+	 */
+	public static void reset(){
+		threadIDsMapping.clear();
+	}
 	
 	/**
 	 * 当一个线程完成时，调用此方法通知ThreadWaiter

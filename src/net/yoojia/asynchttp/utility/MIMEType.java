@@ -244,7 +244,7 @@ public class MIMEType {
 		types.put("pqf","application/x-cprplayer");
 		types.put("pqi","application/cprplayer");
 		types.put("prc","application/x-prc");
-		types.put("pro","xyapplication/x-ns-proxy-autoconfig");
+		types.put("pro","xyapplication/x-ns-httpProxy-autoconfig");
 		types.put("ps","application/postscript");
 		types.put("ptlk","application/listenup");
 		types.put("pub","application/x-mspublisher");

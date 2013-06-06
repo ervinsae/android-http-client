@@ -1,30 +1,23 @@
 package net.yoojia.asynchttp.support;
 
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import net.yoojia.asynchttp.AsyncHttpConnection;
 import net.yoojia.asynchttp.support.ParamsWrapper.NameValue;
 import net.yoojia.asynchttp.support.ParamsWrapper.PathParam;
 import net.yoojia.asynchttp.utility.MIMEType;
 
+import java.io.*;
+import java.net.*;
+
 
 /**
  * @author : 桥下一粒砂
- * @email  : chenyoca@gmail.com
- * @date   : 2012-10-23
- * @desc   : 简单的HTTP实现
+ * email  : chenyoca@gmail.com
+ * date   : 2012-10-23
+ * desc   : 简单的HTTP实现
  */
 public class SimpleHttpInvoker extends RequestInvoker {
 	
 	public final static String DEFAULT_USER_AGENT = String.format("AsyncHttpConnection (chenyoca@gmail.com) version %s", AsyncHttpConnection.VERSION);
-	
-	private final static int CONNECT_TIMEOUT = 15 * 1000;
 	
 	private static final String BOUNDARY = randomBoundry();
 	private static final String MP_BOUNDARY = "--" + BOUNDARY;
@@ -36,43 +29,60 @@ public class SimpleHttpInvoker extends RequestInvoker {
 	@Override
 	protected void executing() {
 		HttpURLConnection httpConnection = null;
+		URL targetURL = null;
+		InputStream stream = null;
+
 		try{
-			URL targetURL = null;
-			String urlPath = url;
-			InputStream stream = null;
 			try{
 				final boolean isGetMethod = HttpMethod.GET.equals(method) && params != null;
-				if(isGetMethod){
-					String strParam = params.getStringParams();
-					if(strParam != null) urlPath = url + "?" + strParam;
-				}
-				targetURL = new URL(urlPath);
-				httpConnection  = (HttpURLConnection) targetURL.openConnection();
-				httpConnection.setConnectTimeout(CONNECT_TIMEOUT);
-				httpConnection.setDoInput(true);
-				httpConnection.setUseCaches( HttpMethod.GET.equals(method) );
-				httpConnection.setRequestMethod(method.name());
-				httpConnection.setRequestProperty("User-agent",DEFAULT_USER_AGENT);
-				if( !isGetMethod ){
-					setParams(httpConnection, params);
-				}
+				targetURL = createURL(isGetMethod);
+				httpConnection  = connect(targetURL);
+				configHttpConnection(httpConnection);
 				callback.onSubmit(targetURL, params);
-				httpConnection.connect();
+				if( !isGetMethod ){
+					fillParamsToConnection(httpConnection, params);
+				}
 				stream = httpConnection.getInputStream();
 			}catch(IOException exp){
-				callback.onError(exp);
-			}	
-			if(token != null){
-				callback.onResponseWithToken(stream,targetURL,token);
-			}else{
-				callback.onResponse(stream,targetURL);
+				exp.printStackTrace();
+				callback.onConnectError(exp);
 			}
+			callback.onResponse(stream,targetURL);
 		}finally{
 			if(httpConnection != null) httpConnection.disconnect();
 		}
 	}
-	
-	public static void setParams(final HttpURLConnection conn, ParamsWrapper params) throws IOException {
+
+	private URL createURL(boolean isGetMethod) throws MalformedURLException, UnsupportedEncodingException {
+		String urlPath = url;
+		if(isGetMethod){
+			String strParam = params.getStringParams();
+			if(strParam != null) urlPath = url + "?" + strParam;
+		}
+		return new URL(urlPath);
+	}
+
+	private HttpURLConnection connect(URL targetURL) throws IOException {
+		URLConnection connection = httpProxy == null ? targetURL.openConnection() : targetURL.openConnection(httpProxy);
+		return (HttpURLConnection) connection;
+	}
+
+	private void configHttpConnection (HttpURLConnection httpConnection) throws ProtocolException {
+		httpConnection.setConnectTimeout(httpConnectTimeout);
+		httpConnection.setReadTimeout(httpSocketTimeout);
+		httpConnection.setDoInput(true);
+		httpConnection.setUseCaches( HttpMethod.GET.equals(method) );
+		httpConnection.setRequestMethod(method.name());
+		httpConnection.setRequestProperty("User-agent",DEFAULT_USER_AGENT);
+	}
+
+	/**
+	 * 将参数填充到Http连接中
+	 * @param conn Http连接
+	 * @param params 参数组
+	 * @throws IOException
+	 */
+	public static void fillParamsToConnection (final HttpURLConnection conn, ParamsWrapper params) throws IOException {
 		if(params == null) return;
 		conn.setDoOutput(true);
 		if(params.pathParamArray.isEmpty()){
@@ -98,7 +108,14 @@ public class SimpleHttpInvoker extends RequestInvoker {
 			paramsOutStream.close();
 		}
 	}
-	
+
+	/**
+	 * 将字符参数填充到POST参数块中
+	 * @param out 参数输出流
+	 * @param paramName 参数名
+	 * @param value 参数对象
+	 * @throws IOException
+	 */
 	public static void setStringParamForPost(OutputStream out,String paramName,String value) throws IOException{
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(MP_BOUNDARY).append("\r\n");
@@ -107,7 +124,15 @@ public class SimpleHttpInvoker extends RequestInvoker {
 		byte[] res = buffer.toString().getBytes();
 		out.write(res);
 	}
-	
+
+	/**
+	 * 将文件参数填充到POST参数块中
+	 * @param out 参数输出流
+	 * @param paramName 参数名
+	 * @param fileName 文件名
+	 * @param filePath 文件路径
+	 * @throws IOException
+	 */
 	public static void setPathParamForPost(OutputStream out, String paramName,String fileName,String filePath) throws IOException{
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(MP_BOUNDARY).append("\r\n");
@@ -139,7 +164,7 @@ public class SimpleHttpInvoker extends RequestInvoker {
 	}
 	
 	static String randomBoundry() {
-        StringBuffer buffer = new StringBuffer("----BoundaryGenByInvoker");
+        StringBuilder buffer = new StringBuilder("----BoundaryGenByInvoker");
         for (int t = 1; t < 12; t++) {
             long time = System.currentTimeMillis() + t;
             if (time % 3 == 0) {

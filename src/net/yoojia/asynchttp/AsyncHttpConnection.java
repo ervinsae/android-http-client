@@ -4,8 +4,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import net.yoojia.asynchttp.support.ParamsWrapper;
+import net.yoojia.asynchttp.support.RequestInvoker;
 import net.yoojia.asynchttp.support.RequestInvoker.HttpMethod;
 import net.yoojia.asynchttp.support.RequestInvokerFactory;
+import net.yoojia.asynchttp.support.RequestInvokerFilter;
 
 /**
  * @author : 桥下一粒砂
@@ -15,7 +17,7 @@ import net.yoojia.asynchttp.support.RequestInvokerFactory;
  */
 public class AsyncHttpConnection {
 
-	public static final String VERSION = "1.1.0";
+	public static final String VERSION = "1.2.0";
 	static final int THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors()*2;
 	static final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 	
@@ -26,7 +28,13 @@ public class AsyncHttpConnection {
 	public static AsyncHttpConnection getInstance(){
 		return SingletonProvider.instance;
 	}
-	
+
+	private RequestInvokerFilter requestInvokerFilter;
+
+	public void setRequestInvokerFilter (RequestInvokerFilter requestInvokerFilter) {
+		this.requestInvokerFilter = requestInvokerFilter;
+	}
+
 	/**
 	 * Send a 'get' request to url without params.
 	 * @param url
@@ -45,23 +53,8 @@ public class AsyncHttpConnection {
 	 *
 	 */
 	public void get(String url,ParamsWrapper params,ResponseCallback callback){
-		get(url, params, null,callback);
-	}
-	
-	/**
-	 * Send a 'get' request to url with params & <b>TOKEN</b> , response on callback. The <b>TOKEN</b> object 
-	 * will be back to callback <i>ResponseCallback.onResponse(InputStream response,URL url,Object token)</i>
-	 * as an identify of this request. You can put a object like '12345' to mark your request.
-	 * @param url
-	 * @param params
-	 * @param token
-	 * @param callback
-	 * @return request id
-	 *
-	 */
-	public void get(String url,ParamsWrapper params,Object token,ResponseCallback callback){
 		verifyUrl(url);
-		sendRequest(url,params,HttpMethod.GET,token,callback);
+		sendRequest(url, params, HttpMethod.GET, callback);
 	}
 	
 	/**
@@ -82,23 +75,8 @@ public class AsyncHttpConnection {
 	 *
 	 */
 	public void post(String url,ParamsWrapper params,ResponseCallback callback){
-		post(url, params, null,callback);
-	}
-	
-	/**
-	 * Send a 'post' request to url with params & <b>TOKEN</b> , response on callback. The <b>TOKEN</b> object 
-	 * will be back to callback <i>ResponseCallback.onResponse(InputStream response,URL url,Object token)</i>
-	 * as an identify of this request. You can put a object like '12345' to mark your request.
-	 * @param url
-	 * @param params
-	 * @param token
-	 * @param callback
-	 * @return request id
-	 *
-	 */
-	public void post(String url,ParamsWrapper params,Object token,ResponseCallback callback){
 		verifyUrl(url);
-		sendRequest(url,params,HttpMethod.POST,token,callback);
+		sendRequest(url, params, HttpMethod.POST, callback);
 	}
 	
 	private void verifyUrl(String url){
@@ -113,20 +91,10 @@ public class AsyncHttpConnection {
 	 * @param callback
 	 */
 	public void sendRequest(String url,ParamsWrapper params,HttpMethod method, ResponseCallback callback){
-		sendRequest(url, params, method, null, callback);
-	}
-	
-	/**
-	 * Send request o url with params,method,token and callback.
-	 * @param method
-	 * @param url
-	 * @param params
-	 * @param token
-	 * @param callback
-	 */
-	public void sendRequest(String url,ParamsWrapper params,HttpMethod method,Object token,ResponseCallback callback){
 		if(url == null) return;
-		THREAD_POOL.submit(RequestInvokerFactory.obtain(method, url, params, token, callback));
+		RequestInvoker invoker = RequestInvokerFactory.obtain(method, url, params, callback);
+		if( requestInvokerFilter != null ) requestInvokerFilter.onRequestInvoke(invoker);
+		THREAD_POOL.submit(invoker);
 	}
-	
+
 }
