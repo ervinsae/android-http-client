@@ -1,10 +1,10 @@
 package net.yoojia.asynchttp;
 
+import net.yoojia.asynchttp.utility.StreamUtility;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import net.yoojia.asynchttp.utility.StreamUtility;
 
 
 /**
@@ -21,7 +21,7 @@ public abstract class StringResponseHandler implements ResponseCallback {
 		try {
 			data = StreamUtility.convertToString(response);
 		} catch (IOException exp) {
-			onSteamError(exp);
+			onStreamError(exp);
 			exp.printStackTrace();
 		} finally{
 			StreamUtility.closeSilently(response);

@@ -1,10 +1,10 @@
 package net.yoojia.asynchttp;
 
+import net.yoojia.asynchttp.support.ParamsWrapper;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import net.yoojia.asynchttp.support.ParamsWrapper;
 
 /**
  * @author : 桥下一粒砂 chenyoca@gmail.com
@@ -36,6 +36,6 @@ public interface ResponseCallback {
 	 * 在读取服务端返回的响应流数据的过程，发生IO异常，在此方法中回调。异常会在第一现场被打印输出。
 	 * @param exp 异常对象。
 	 */
-	void onSteamError(IOException exp);
+	void onStreamError (IOException exp);
 
 }

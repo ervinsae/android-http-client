@@ -1,10 +1,10 @@
 package net.yoojia.asynchttp;
 
+import net.yoojia.asynchttp.utility.StreamUtility;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import net.yoojia.asynchttp.utility.StreamUtility;
 
 /**
  * @author : 桥下一粒砂 chenyoca@gmail.com
@@ -19,7 +19,7 @@ public abstract class BinaryResponseHandler implements ResponseCallback {
 		try {
 			data = StreamUtility.convertToByteArray(response);
 		} catch (IOException exp) {
-			onSteamError(exp);
+			onStreamError(exp);
 			exp.printStackTrace();
 		} finally{
 			StreamUtility.closeSilently(response);

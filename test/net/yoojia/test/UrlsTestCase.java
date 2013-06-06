@@ -1,9 +1,5 @@
 package net.yoojia.test;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
 import junit.framework.Assert;
 import net.yoojia.asynchttp.AsyncHttpConnection;
 import net.yoojia.asynchttp.BinaryResponseHandler;
@@ -11,9 +7,10 @@ import net.yoojia.asynchttp.ResponseCallback;
 import net.yoojia.asynchttp.StringResponseHandler;
 import net.yoojia.asynchttp.support.ParamsWrapper;
 import net.yoojia.asynchttp.utility.ResponseCallbackTrace;
-import net.yoojia.asynchttp.utility.ThreadWaiter;
 
-import org.junit.Test;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 
 /**
@@ -70,7 +67,7 @@ public class UrlsTestCase{
 		}
 
 		@Override
-		public void onSteamError (IOException exp) {
+		public void onStreamError (IOException exp) {
 			Assert.fail(exp.getMessage());
 		}
 
@@ -93,7 +90,7 @@ public class UrlsTestCase{
 		}
 
 		@Override
-		public void onSteamError (IOException exp) {
+		public void onStreamError (IOException exp) {
 			Assert.fail(exp.getMessage());
 		}
 
@@ -117,7 +114,7 @@ public class UrlsTestCase{
 		}
 
 		@Override
-		public void onSteamError (IOException exp) {
+		public void onStreamError (IOException exp) {
 			Assert.fail(exp.getMessage());
 		}
 

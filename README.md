@@ -116,7 +116,7 @@ public class UrlsTestCase{
 		}
 
 		@Override
-		public void onSteamError (IOException exp) {
+		public void onStreamError (IOException exp) {
 			Assert.fail(exp.getMessage());
 		}
 
@@ -139,7 +139,7 @@ public class UrlsTestCase{
 		}
 
 		@Override
-		public void onSteamError (IOException exp) {
+		public void onStreamError (IOException exp) {
 			Assert.fail(exp.getMessage());
 		}
 
@@ -163,7 +163,7 @@ public class UrlsTestCase{
 		}
 
 		@Override
-		public void onSteamError (IOException exp) {
+		public void onStreamError (IOException exp) {
 			Assert.fail(exp.getMessage());
 		}
 
@@ -260,7 +260,7 @@ String url = ...
         }
 
         @Override
-        public void onSteamError (IOException exp) {
+        public void onStreamError (IOException exp) {
             Assert.fail(exp.getMessage());
         }
 
@@ -283,7 +283,7 @@ String url = ...
         }
 
         @Override
-        public void onSteamError (IOException exp) {
+        public void onStreamError (IOException exp) {
             Assert.fail(exp.getMessage());
         }
 
@@ -309,7 +309,7 @@ String url = ...
         }
 
         @Override
-        public void onSteamError (IOException exp) {
+        public void onStreamError (IOException exp) {
             Assert.fail(exp.getMessage());
         }
 
@@ -346,7 +346,7 @@ String url = ...
         }
 
         @Override
-        public void onSteamError (IOException exp) {
+        public void onStreamError (IOException exp) {
             Assert.fail(exp.getMessage());
         }
 
@@ -368,7 +368,7 @@ String url = ...
         }
 
         @Override
-        public void onSteamError (IOException exp) {
+        public void onStreamError (IOException exp) {
             Assert.fail(exp.getMessage());
         }
 
@@ -407,7 +407,7 @@ int requestId = http.post(url, params, new StringResponseHandler() {
     }
 
     @Override
-    public void onSteamError (IOException exp) {
+    public void onStreamError (IOException exp) {
         Assert.fail(exp.getMessage());
     }
 
@@ -454,7 +454,7 @@ int requestId = http.post(url, params, token, new StringResponseHandler() {
     }
 
     @Override
-    public void onSteamError (IOException exp) {
+    public void onStreamError (IOException exp) {
         Assert.fail(exp.getMessage());
     }
 
