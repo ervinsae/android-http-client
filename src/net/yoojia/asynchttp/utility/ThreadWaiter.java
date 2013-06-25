@@ -17,16 +17,16 @@ public class ThreadWaiter {
 	 * 当一个线程完成时，调用此方法通知ThreadWaiter
 	 */
 	public static void threadFinished(){
-		long threadid = Thread.currentThread().getId();
-		threadIDsMapping.remove(threadid);
+		long threadId = Thread.currentThread().getId();
+		threadIDsMapping.remove(threadId);
 	}
 	
 	/**
 	 * 当一个线程开始后，调用此方法通知ThreadWaiter
 	 */
 	public static void threadStarted(){
-		long threadid = Thread.currentThread().getId();
-		threadIDsMapping.put(threadid, threadid);
+		long threadId = Thread.currentThread().getId();
+		threadIDsMapping.put(threadId, threadId);
 	}
 	
 	/**

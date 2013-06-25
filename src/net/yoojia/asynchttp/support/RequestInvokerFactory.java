@@ -18,7 +18,7 @@ public class RequestInvokerFactory {
 			try {
 				invoker = InvokerType.newInstance();
 			} catch (Exception exp) {
-				System.err.println(String.format("Cannot instance from %s, used default HttpUrlInvoker",InvokerType.getName()));
+				System.err.println(String.format("Cannot instance from %s, used default SimpleHttpInvoker.",InvokerType.getName()));
 				invoker = new SimpleHttpInvoker();
 			}
 		}else{

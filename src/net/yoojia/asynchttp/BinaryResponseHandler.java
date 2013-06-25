@@ -19,8 +19,8 @@ public abstract class BinaryResponseHandler implements ResponseCallback {
 		try {
 			data = StreamUtility.convertToByteArray(response);
 		} catch (IOException exp) {
-			onStreamError(exp);
 			exp.printStackTrace();
+			onStreamError(exp);
 		} finally{
 			StreamUtility.closeSilently(response);
 		}

@@ -93,7 +93,7 @@ public class ParamsWrapper {
 			return getStringParams();
 		} catch (UnsupportedEncodingException exp) {
 			exp.printStackTrace();
-			return "Params contains unsupport encoding content";
+			return "Params contains unsupported encoding content!";
 		}
 	}
 	

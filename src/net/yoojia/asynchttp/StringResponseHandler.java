@@ -20,8 +20,8 @@ public abstract class StringResponseHandler implements ResponseCallback {
 		try {
 			data = StreamUtility.convertToString(response);
 		} catch (IOException exp) {
-			onStreamError(exp);
 			exp.printStackTrace();
+			onStreamError(exp);
 		} finally{
 			StreamUtility.closeSilently(response);
 		}

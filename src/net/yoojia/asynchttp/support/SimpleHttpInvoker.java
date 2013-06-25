@@ -31,7 +31,6 @@ public class SimpleHttpInvoker extends RequestInvoker {
 		HttpURLConnection httpConnection = null;
 		URL targetURL = null;
 		InputStream stream = null;
-
 		try{
 			try{
 				final boolean isGetMethod = HttpMethod.GET.equals(method) && params != null;
