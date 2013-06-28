@@ -1,12 +1,13 @@
 # Async Http Connection
 =====================
 
- * a multithread callback-based async http connection library. it can be use on android project or general java project.
+ * a multi-thread callback-based async http connection library. it can be use on android project or general java project.
  * 一个基于回调机制的多线程异步Http连接库。它可用于Android项目或者一般Java项目。
 
 ## 适用
 	
-	Async HTTP Connection为简单的Http连接请求而设计。适用于API SDK等小数据传输项目，设计目标为Android项目。
+	Async HTTP Connection为简单的Http连接请求而设计。
+	适用于API SDK等小数据传输项目，设计目标为Android项目。
 	当前项目属性为Java项目，并使用JUnit4作为测试环境，主要是Android项目调试不方便。
 	如果需要完善的功能，推荐一位国外大神的项目：[android-async-http](https://github.com/loopj/android-async-http)
 	
