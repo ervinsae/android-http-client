@@ -4,6 +4,7 @@ import net.yoojia.asynchttp.AsyncHttpConnection;
 import net.yoojia.asynchttp.support.ParamsWrapper.NameValue;
 import net.yoojia.asynchttp.support.ParamsWrapper.PathParam;
 import net.yoojia.asynchttp.utility.MIMEType;
+import net.yoojia.asynchttp.utility.TextUtils;
 
 import java.io.*;
 import java.net.*;
@@ -25,9 +26,16 @@ public class SimpleHttpInvoker extends RequestInvoker {
 	private static final String END_MP_BLOCK = "\r\n\r\n";
 	private static final String MULTIPART_FORM_DATA = "multipart/form-data";
 	private static final String XWWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
-	
+
+    private static final CookieManager COOKIE_MANAGER;
+    static {
+        //System wide
+        COOKIE_MANAGER = new CookieManager( null, CookiePolicy.ACCEPT_ALL );
+        CookieHandler.setDefault(COOKIE_MANAGER);
+    }
+
 	@Override
-	protected void executing() {
+	protected void execute() {
 		HttpURLConnection httpConnection = null;
 		URL targetURL = null;
 		InputStream stream = null;
@@ -41,12 +49,16 @@ public class SimpleHttpInvoker extends RequestInvoker {
 				if( !isGetMethod ){
 					fillParamsToConnection(httpConnection, params);
 				}
-				stream = httpConnection.getInputStream();
+                if(cookieStore != null && cookieStore.getCookies().size() > 0) {
+                    httpConnection.setRequestProperty("Cookie",TextUtils.join(";", cookieStore.getCookies()));
+                }
+                stream = httpConnection.getInputStream();
 			}catch(IOException exp){
 				exp.printStackTrace();
 				callback.onConnectError(exp);
 			}
-			callback.onResponse(stream,targetURL);
+            CookieStore cookieStore = COOKIE_MANAGER.getCookieStore();
+			callback.onResponse(cookieStore,stream,targetURL);
 		}finally{
 			if(httpConnection != null) httpConnection.disconnect();
 		}

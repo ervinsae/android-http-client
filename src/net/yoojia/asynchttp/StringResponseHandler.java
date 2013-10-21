@@ -4,6 +4,7 @@ import net.yoojia.asynchttp.utility.StreamUtility;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.CookieStore;
 import java.net.URL;
 
 
@@ -14,8 +15,11 @@ import java.net.URL;
  */
 public abstract class StringResponseHandler implements ResponseCallback {
 
+    protected CookieStore cookieStore;
+    
 	@Override
-	final public void onResponse(InputStream response,URL url) {
+	final public void onResponse(CookieStore cookieStore,InputStream response,URL url) {
+        this.cookieStore = cookieStore;
 		String data = null;
 		try {
 			data = StreamUtility.convertToString(response);

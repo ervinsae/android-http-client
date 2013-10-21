@@ -2,6 +2,7 @@ package net.yoojia.asynchttp.support;
 
 import net.yoojia.asynchttp.ResponseCallback;
 
+import java.net.CookieStore;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketAddress;
@@ -27,8 +28,9 @@ public abstract class RequestInvoker implements Runnable{
 	protected ParamsWrapper params;
 	protected ResponseCallback callback;
 	protected Proxy httpProxy;
+    protected CookieStore cookieStore;
 
-	protected int httpConnectTimeout = HTTP_CONNECT_TIMEOUT;
+    protected int httpConnectTimeout = HTTP_CONNECT_TIMEOUT;
 	protected int httpSocketTimeout = HTTP_SOCKET_TIMEOUT;
 
 	/**
@@ -38,6 +40,14 @@ public abstract class RequestInvoker implements Runnable{
 	public void setHttpProxy (Proxy httpProxy) {
 		this.httpProxy = httpProxy;
 	}
+
+    /**
+     * 设置Cookie
+     * @param cookieStore
+     */
+    public void setCookieStore(CookieStore cookieStore) {
+        this.cookieStore = cookieStore;
+    }
 
 	/**
 	 * 设置Http代理
@@ -77,9 +87,9 @@ public abstract class RequestInvoker implements Runnable{
 	 */
 	@Override
 	public final void run() {
-		executing();
+		execute();
 	}
 
-	protected abstract void executing();
+	protected abstract void execute();
 	
 }

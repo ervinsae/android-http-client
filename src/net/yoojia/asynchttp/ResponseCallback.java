@@ -4,6 +4,7 @@ import net.yoojia.asynchttp.support.ParamsWrapper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.CookieStore;
 import java.net.URL;
 
 /**
@@ -20,11 +21,11 @@ public interface ResponseCallback {
 	 */
 	void onSubmit(URL url, ParamsWrapper params);
 	
-	/**
-	 * 返回服务端的响应流。响应流的关闭，由Callback的实现类关闭。
-	 * @param response 响应流
-	 */
-	void onResponse(InputStream response,URL url);
+    /**
+     * 返回服务端的响应流。响应流的关闭，由Callback的实现类关闭。
+     * @param response 响应流
+     */
+    void onResponse(CookieStore cookieStore,InputStream response,URL url);
 	
 	/**
 	 * 从客户端连接服务端，服务端返回响应的过程中发生的IO异常，在此方法中回调。异常会在第一现场被打印输出。
