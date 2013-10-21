@@ -16,7 +16,7 @@ import java.net.URL;
 public abstract class StringResponseHandler implements ResponseCallback {
 
     protected CookieStore cookieStore;
-    
+
 	@Override
 	final public void onResponse(CookieStore cookieStore,InputStream response,URL url) {
         this.cookieStore = cookieStore;

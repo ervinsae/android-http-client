@@ -6,6 +6,7 @@ import net.yoojia.asynchttp.support.RequestInvoker.HttpMethod;
 import net.yoojia.asynchttp.support.RequestInvokerFactory;
 import net.yoojia.asynchttp.support.RequestInvokerFilter;
 
+import java.net.CookieStore;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,7 +31,13 @@ public class AsyncHttpConnection {
 
 	private RequestInvokerFilter requestInvokerFilter;
 
-	public void setRequestInvokerFilter (RequestInvokerFilter requestInvokerFilter) {
+    private CookieStore cookieStore;
+
+    public void setCookieStore(CookieStore cookieStore) {
+        this.cookieStore = cookieStore;
+    }
+
+    public void setRequestInvokerFilter (RequestInvokerFilter requestInvokerFilter) {
 		this.requestInvokerFilter = requestInvokerFilter;
 	}
 
@@ -90,6 +97,7 @@ public class AsyncHttpConnection {
 	public void sendRequest(String url,ParamsWrapper params,HttpMethod method, ResponseCallback callback){
 		if(url == null) return;
 		RequestInvoker invoker = RequestInvokerFactory.obtain(method, url, params, callback);
+        invoker.setCookieStore(cookieStore);
 		if( requestInvokerFilter != null ) requestInvokerFilter.onRequestInvoke(invoker);
 		THREAD_POOL.submit(invoker);
 	}
