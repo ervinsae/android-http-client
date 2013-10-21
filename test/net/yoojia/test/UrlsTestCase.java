@@ -10,6 +10,7 @@ import net.yoojia.asynchttp.utility.ResponseCallbackTrace;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.CookieStore;
 import java.net.URL;
 
 
@@ -55,9 +56,9 @@ public class UrlsTestCase{
 	protected final ResponseCallback callback = new ResponseCallback() {
 		
 		@Override
-		public void onResponse(InputStream response,URL url) {
+		public void onResponse(CookieStore cookieStore,InputStream response,URL url) {
 			System.out.print("请求URL："+url+"  ");
-			System.out.println("返回InputStream数据："+url);
+			System.out.println("返回InputStream数据：" + url);
 			Assert.assertNotNull(response);
 		}
 
