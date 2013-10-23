@@ -97,7 +97,7 @@ public class AsyncHttpConnection {
 	public void sendRequest(String url,ParamsWrapper params,HttpMethod method, ResponseCallback callback){
 		if(url == null) return;
 		RequestInvoker invoker = RequestInvokerFactory.obtain(method, url, params, callback);
-        invoker.setCookieStore(cookieStore);
+        invoker.setCustomCookieStore(cookieStore);
 		if( requestInvokerFilter != null ) requestInvokerFilter.onRequestInvoke(invoker);
 		THREAD_POOL.submit(invoker);
 	}

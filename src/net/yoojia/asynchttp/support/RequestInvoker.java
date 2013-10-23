@@ -28,7 +28,7 @@ public abstract class RequestInvoker implements Runnable{
 	protected ParamsWrapper params;
 	protected ResponseCallback callback;
 	protected Proxy httpProxy;
-    protected CookieStore cookieStore;
+    protected CookieStore customCookieStore;
 
     protected int httpConnectTimeout = HTTP_CONNECT_TIMEOUT;
 	protected int httpSocketTimeout = HTTP_SOCKET_TIMEOUT;
@@ -43,10 +43,10 @@ public abstract class RequestInvoker implements Runnable{
 
     /**
      * 设置Cookie
-     * @param cookieStore
+     * @param customCookieStore
      */
-    public void setCookieStore(CookieStore cookieStore) {
-        this.cookieStore = cookieStore;
+    public void setCustomCookieStore(CookieStore customCookieStore) {
+        this.customCookieStore = customCookieStore;
     }
 
 	/**
