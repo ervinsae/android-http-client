@@ -37,31 +37,32 @@ public class SimpleHttpInvoker extends RequestInvoker {
 	@Override
 	protected void execute() {
 		HttpURLConnection httpConnection = null;
-		URL targetURL = null;
-		InputStream stream = null;
-		try{
-			try{
-				final boolean isGetMethod = HttpMethod.GET.equals(method) && params != null;
-				targetURL = createURL(isGetMethod);
-				httpConnection  = connect(targetURL);
-				configHttpConnection(httpConnection);
-				callback.onSubmit(targetURL, params);
-				if( !isGetMethod ){
-					fillParamsToConnection(httpConnection, params);
-				}
-                if(cookieStore != null && cookieStore.getCookies().size() > 0) {
-                    httpConnection.setRequestProperty("Cookie",TextUtils.join(";", cookieStore.getCookies()));
-                }
-                stream = httpConnection.getInputStream();
-			}catch(IOException exp){
-				exp.printStackTrace();
-				callback.onConnectError(exp);
-			}
+        try{
+            final boolean isGetMethod = HttpMethod.GET.equals(method) && params != null;
+            URL targetURL = createURL(isGetMethod);
+            httpConnection  = connect(targetURL);
+            configHttpConnection(httpConnection);
+            callback.onSubmit(targetURL, params);
+            if( !isGetMethod ){
+                fillParamsToConnection(httpConnection, params);
+            }
+            if(cookieStore != null && cookieStore.getCookies().size() > 0) {
+                httpConnection.setRequestProperty("Cookie",TextUtils.join(";", cookieStore.getCookies()));
+            }
+            InputStream stream = httpConnection.getInputStream();
             CookieStore cookieStore = COOKIE_MANAGER.getCookieStore();
-			callback.onResponse(cookieStore,stream,targetURL);
-		}finally{
-			if(httpConnection != null) httpConnection.disconnect();
-		}
+            // InputStream 由 onResponse 关闭
+            callback.onResponse(cookieStore,stream,targetURL);
+        }catch(IOException exp){
+            exp.printStackTrace();
+            callback.onConnectError(exp);
+        }catch (Throwable exp){
+            exp.printStackTrace();
+            callback.onUncatchedError(exp);
+        }
+        if(httpConnection != null){
+            httpConnection.disconnect();
+        }
 	}
 
 	private URL createURL(boolean isGetMethod) throws MalformedURLException, UnsupportedEncodingException {
@@ -85,6 +86,7 @@ public class SimpleHttpInvoker extends RequestInvoker {
 		httpConnection.setUseCaches( HttpMethod.GET.equals(method) );
 		httpConnection.setRequestMethod(method.name());
 		httpConnection.setRequestProperty("User-agent",DEFAULT_USER_AGENT);
+        httpConnection.setRequestProperty("Connection:","keep-alive");
 	}
 
 	/**
@@ -102,7 +104,6 @@ public class SimpleHttpInvoker extends RequestInvoker {
 			paramsOutStream.write(params.getStringParams().getBytes());
 			paramsOutStream.close();
 		}else{
-			conn.setRequestProperty("Connection:"," keep-alive");
 			conn.setRequestProperty("Content-Type", MULTIPART_FORM_DATA + "; boundary=" + BOUNDARY);
 			DataOutputStream paramsOutStream = new DataOutputStream(conn.getOutputStream());
 			final int nameValueCount = params.nameValueArray.size();

@@ -39,4 +39,10 @@ public interface ResponseCallback {
 	 */
 	void onStreamError (IOException exp);
 
+    /**
+     * 其它异常
+     * @param exp 异常对象。
+     */
+    void onUncatchedError(Throwable exp);
+
 }

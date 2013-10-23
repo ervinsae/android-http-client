@@ -25,11 +25,19 @@ public abstract class BinaryResponseHandler implements ResponseCallback {
 		} catch (IOException exp) {
 			exp.printStackTrace();
 			onStreamError(exp);
-		} finally{
+        }catch (Throwable exp) {
+            exp.printStackTrace();
+            onUncatchedError(exp);
+        } finally{
 			StreamUtility.closeSilently(response);
 		}
 		onResponse(data,url);
 	}
+
+    @Override
+    public void onUncatchedError(Throwable exp) {
+
+    }
 
 	public abstract void onResponse(byte[] data,URL url);
 	

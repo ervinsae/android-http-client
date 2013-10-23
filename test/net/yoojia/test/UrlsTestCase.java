@@ -62,6 +62,11 @@ public class UrlsTestCase{
 			Assert.assertNotNull(response);
 		}
 
+        @Override
+        public void onUncatchedError(Throwable exp) {
+
+        }
+
 		@Override
 		public void onConnectError (IOException exp) {
 			Assert.fail(exp.getMessage());

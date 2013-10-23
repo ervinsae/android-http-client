@@ -26,12 +26,20 @@ public abstract class StringResponseHandler implements ResponseCallback {
 		} catch (IOException exp) {
 			exp.printStackTrace();
 			onStreamError(exp);
-		} finally{
+		}catch (Throwable exp) {
+            exp.printStackTrace();
+            onUncatchedError(exp);
+        } finally{
 			StreamUtility.closeSilently(response);
 		}
 		onResponse(data,url);
 	}
 
-	protected abstract void onResponse(String content,URL url);
+    @Override
+    public void onUncatchedError(Throwable exp) {
+
+    }
+
+    protected abstract void onResponse(String content,URL url);
 	
 }

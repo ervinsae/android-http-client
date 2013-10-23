@@ -25,7 +25,7 @@ public class StreamUtility {
         return encoding;
 	}
 	
-	public static String convertToString(InputStream is) throws IOException{
+	public static String convertToString(InputStream is) throws Throwable{
 	    if( null == is ) return null;
 	    String encoding = DEFAULT_CHARSET;
 	    InputStreamReader isr = new InputStreamReader(is,encoding);
@@ -49,7 +49,7 @@ public class StreamUtility {
 		return sb.toString();
 	}
 	
-	public static byte[] convertToByteArray(InputStream is) throws IOException{
+	public static byte[] convertToByteArray(InputStream is) throws Throwable{
 	    if( null == is ) return null;
 		byte[] cache = new byte[ BYTE_CACHE_SIZE * 2 ];
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -60,6 +60,7 @@ public class StreamUtility {
 	}
 	
 	public static void closeSilently(InputStream is){
+        if(is == null) return;
 		try {
 			is.close();
 		} catch (IOException e) {
