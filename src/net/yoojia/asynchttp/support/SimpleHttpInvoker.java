@@ -46,11 +46,9 @@ public class SimpleHttpInvoker extends RequestInvoker {
             if( !isGetMethod ){
                 fillParamsToConnection(httpConnection, params);
             }
-            // 设置自定义cookies
-            if(customCookieStore != null && customCookieStore.getCookies().size() > 0) {
-                httpConnection.setRequestProperty("Cookie",TextUtils.join(";", customCookieStore.getCookies()));
+            if(cookieStore != null && cookieStore.getCookies().size() > 0) {
+                httpConnection.setRequestProperty("Cookie",TextUtils.join(";", cookieStore.getCookies()));
             }
-
             InputStream stream = httpConnection.getInputStream();
             CookieStore cookieStore = COOKIE_MANAGER.getCookieStore();
             // InputStream 由 onResponse 关闭
@@ -88,6 +86,7 @@ public class SimpleHttpInvoker extends RequestInvoker {
 		httpConnection.setUseCaches( HttpMethod.GET.equals(method) );
 		httpConnection.setRequestMethod(method.name());
 		httpConnection.setRequestProperty("User-agent",DEFAULT_USER_AGENT);
+        httpConnection.setRequestProperty("Connection:","keep-alive");
 	}
 
 	/**
